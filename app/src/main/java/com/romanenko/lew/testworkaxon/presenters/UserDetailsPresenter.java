@@ -7,6 +7,10 @@ import com.romanenko.lew.testworkaxon.base.RandomUserProfileContract;
 import com.romanenko.lew.testworkaxon.model.Repository;
 import com.romanenko.lew.testworkaxon.model.requestPOJO.Result;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -42,7 +46,7 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
                         //getView().loadListRandomUsers(randomUserContainer.getResults());
 
                         getView().loadCallPhone(randomUserProfile.getPhone());
-                        getView().loadDateOfBirth(randomUserProfile.getDob().getDate());
+                        getView().loadDateOfBirth(parseDate(randomUserProfile.getDob().getDate()));
                         getView().loadEmail(randomUserProfile.getEmail());
                         getView().loadGender(randomUserProfile.getGender());
                         getView().loadImageProfile(randomUserProfile.getPicture().getLarge());
@@ -64,6 +68,22 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
     @Override
     public void viewIsReady() {
 
+    }
+
+    private String parseDate(String dateInput) {
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:dd'Z'");
+        SimpleDateFormat formatter;
+        String formattedDate = null;
+        Date date = null;
+        try {
+            date = parser.parse(dateInput);
+            formatter = new SimpleDateFormat("yyyy-MM-dd");
+            formattedDate = formatter.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return formattedDate;
     }
 }
 
