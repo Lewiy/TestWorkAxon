@@ -33,17 +33,10 @@ public class Services {
         public Response intercept(Chain chain) throws IOException {
             Request original = chain.request();
 
-            Response response = chain.proceed(chain.request());
-            //Log.w("Retrofit@Response", response.body().string());
-            String body = response.body().string();
-            // String string = original.body().toString();
             Request request = original.newBuilder()
-                   // .header("Accept", "application/json")
-                  //  .header("Content-Type", "application/json")
-                   // .header("Cache-Control", String.format("max-age=%d", 50000))
+
                     .method(original.method(), original.body())
                     .build();
-            // Log.w("Retrofit@Response", request.body().toString());
 
             return chain.proceed(request);
         }

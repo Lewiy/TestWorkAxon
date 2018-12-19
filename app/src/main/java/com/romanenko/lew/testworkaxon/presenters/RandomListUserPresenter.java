@@ -17,45 +17,26 @@ public class RandomListUserPresenter extends BasePresenter<RandomListUserContrac
 
 
     private Context context;
+    private static final int NUMBERLOADEDUSERS = 10;
 
     public RandomListUserPresenter(Context context) {
         this.context = context;
     }
 
-    public void getRandomUserApi() {
+    public void getRandomUsers(int number) {
 
-        Observable<RandomUserContainer> randomUserContainerFlowable = Repository.getInstance().getRandomUsers(10);
+        Observable<RandomUserContainer> randomUserContainerFlowable = Repository.getInstance().getRandomUsers(number);
 
         randomUserContainerFlowable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<RandomUserContainer>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(RandomUserContainer randomUserContainer) {
-                        getView().loadListRandomUsers(randomUserContainer.getResults());
-                        Repository.getInstance().setRandomUserContainer(randomUserContainer);
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        getView().showError(e.getMessage().toString());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        // int a = 5;
-                    }
-                });
-
-       // RandomUserContainer randomUserContainer   = Repository.getInstance().getRandomUsers(10);
+                .subscribe(
+                        value ->  {getView().loadListRandomUsers(value.getResults());
+                        Repository.getInstance().setRandomUserContainer(value.getResults());},
+                        e -> getView().showError(e.getMessage().toString())
+    );
 
     }
-
 
     @Override
     public void loadListRandomUsers() {
@@ -64,6 +45,6 @@ public class RandomListUserPresenter extends BasePresenter<RandomListUserContrac
 
     @Override
     public void viewIsReady() {
-        getRandomUserApi();
+        getRandomUsers(NUMBERLOADEDUSERS);
     }
 }

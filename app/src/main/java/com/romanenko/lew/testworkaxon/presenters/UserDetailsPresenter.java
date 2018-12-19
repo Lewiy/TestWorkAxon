@@ -28,40 +28,23 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
 
 
     @Override
-    public void loadRandomUserProfile(int userId) {
+    public void loadRandomUserProfile(String email) {
 
-        Observable<Result> randomUserProfile = Repository.getInstance().getRandomUser(userId);
+        Observable<Result> randomUserProfile = Repository.getInstance().getRandomUser(email);
 
         randomUserProfile
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<Result>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-
-                    }
-
-                    @Override
-                    public void onNext(Result randomUserProfile) {
-
-                        getView().loadCallPhone(randomUserProfile.getPhone());
-                        getView().loadDateOfBirth(parseDate(randomUserProfile.getDob().getDate()));
-                        getView().loadEmail(randomUserProfile.getEmail());
-                        getView().loadGender(randomUserProfile.getGender());
-                        getView().loadImageProfile(randomUserProfile.getPicture().getLarge());
-                        getView().loadName(randomUserProfile.getName().getFirst());
-                        getView().loadSurname(randomUserProfile.getName().getLast());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        getView().showError(e.getMessage().toString());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                    }
-                });
+                .subscribe(
+                        value ->  { getView().loadCallPhone(value.getPhone());
+                            getView().loadDateOfBirth(parseDate(value.getDob().getDate()));
+                            getView().loadEmail(value.getEmail());
+                            getView().loadGender(value.getGender());
+                            getView().loadImageProfile(value.getPicture().getLarge());
+                            getView().loadName(value.getName().getFirst());
+                            getView().loadSurname(value.getName().getLast());},
+                        e -> getView().showError(e.getMessage().toString())
+                );
     }
 
     @Override

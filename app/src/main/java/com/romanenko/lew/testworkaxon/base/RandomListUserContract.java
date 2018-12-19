@@ -11,6 +11,6 @@ public interface RandomListUserContract {
     }
 
     interface PresenterListRandomUsers extends IPresenter<ViewListRandomUsers> {
-        void loadListRandomUsers();
+            void loadListRandomUsers();
     }
 }

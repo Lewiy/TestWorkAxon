@@ -7,8 +7,7 @@ import io.reactivex.Observable;
 
 
 public interface ReposutoryRandomUsers {
-
   Observable<RandomUserContainer> getRandomUsers(int number);
-  Observable<Result> getRandomUser(int userId);
+  Observable<Result> getRandomUser(String email);
 
 }

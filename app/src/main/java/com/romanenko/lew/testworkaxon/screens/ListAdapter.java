@@ -49,7 +49,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListUsersViewH
         return listUsers.size();
     }
 
-    public void setItems(Collection<Result> users) {
+    public void setItems(List<Result> users) {
         listUsers.addAll(users);
         notifyDataSetChanged();
 

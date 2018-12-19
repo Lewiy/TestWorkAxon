@@ -3,7 +3,6 @@ package com.romanenko.lew.testworkaxon.screens;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -31,11 +30,12 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    private ListAdapter listAdapter;
-    private LinearLayoutManager linearLayoutManager;
+    private ListAdapter mListAdapter;
+    private LinearLayoutManager mLinearLayoutManager;
     private boolean loading = true;
-    int pastVisiblesItems, visibleItemCount, totalItemCount;
-    private RandomListUserPresenter randomListUserPresenter;
+    int mPastVisiblesItems, mVisibleItemCount, mTotalItemCount;
+    private RandomListUserPresenter mRandomListUserPresenter;
+
 
     public static ListUsersFragment newInstance() {
         ListUsersFragment fragment = new ListUsersFragment();
@@ -50,9 +50,9 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
         ButterKnife.bind(this, view);
 
 
-        randomListUserPresenter = new RandomListUserPresenter(getContext());
-        randomListUserPresenter.attachView(this);
-        randomListUserPresenter.viewIsReady();
+        mRandomListUserPresenter = new RandomListUserPresenter(getContext());
+        mRandomListUserPresenter.attachView(this);
+        mRandomListUserPresenter.viewIsReady();
 
         initializeUIElements();
 
@@ -62,10 +62,10 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
     }
 
     private void initializeUIElements() {
-        linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        listAdapter = new ListAdapter(getContext(), onClickItemList());
-        recyclerUsers.setLayoutManager(linearLayoutManager);
-        recyclerUsers.setAdapter(listAdapter);
+        mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        mListAdapter = new ListAdapter(getContext(), onClickItemList());
+        recyclerUsers.setLayoutManager(mLinearLayoutManager);
+        recyclerUsers.setAdapter(mListAdapter);
         recyclerUsers.setItemAnimator(new DefaultItemAnimator());
         recyclerUsers.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
@@ -74,7 +74,7 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
     @Override
     public void loadListRandomUsers(List<Result> items) {
         progressBar.setVisibility(View.GONE);
-        listAdapter.setItems(items);
+        mListAdapter.setItems(items);
         loading = true;
     }
 
@@ -83,7 +83,7 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
         return new ListAdapter.RecyclerViewClickListener() {
             @Override
             public void onClick(View view, int position, Result result) {
-                openUserFragmentDetail(position);
+                openUserFragmentDetail(result);
             }
         };
     }
@@ -93,15 +93,15 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 if (dy > 0) {
-                    visibleItemCount = linearLayoutManager.getChildCount();
-                    totalItemCount = linearLayoutManager.getItemCount();
-                    pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
+                    mVisibleItemCount = mLinearLayoutManager.getChildCount();
+                    mTotalItemCount = mLinearLayoutManager.getItemCount();
+                    mPastVisiblesItems = mLinearLayoutManager.findFirstVisibleItemPosition();
 
                     if (loading) {
-                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                        if ((mVisibleItemCount + mPastVisiblesItems) >= mTotalItemCount) {
                             progressBar.setVisibility(View.VISIBLE);
                             loading = false;
-                            randomListUserPresenter.getRandomUserApi();
+                            mRandomListUserPresenter.getRandomUsers(NUMBERLOADEDUSERS);
                         }
                     }
                 }
@@ -109,8 +109,8 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
         });
     }
 
-    private void openUserFragmentDetail(int userId) {
-        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(userId);
+    private void openUserFragmentDetail(Result result) {
+        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(result);
         ListUsersFragment listUsersFragment = ListUsersFragment.newInstance();
         FragmentManager fm = getActivity().getSupportFragmentManager();
         fm.beginTransaction()

@@ -48,9 +48,9 @@ public class UserProfileFragment extends BaseFragment implements RandomUserProfi
 
     private static final String USER_ID = "user_id";
 
-    public static UserProfileFragment newInstance(int userId) {
+    public static UserProfileFragment newInstance(Result result) {
         Bundle args = new Bundle();
-        args.putInt(USER_ID, userId);
+        args.putString(USER_ID, result.getEmail().toString());
         UserProfileFragment fragment = new UserProfileFragment();
         fragment.setArguments(args);
         return fragment;
@@ -64,7 +64,7 @@ public class UserProfileFragment extends BaseFragment implements RandomUserProfi
         Bundle bundle = getArguments();
 
         UserDetailsPresenter userDetailsPresenter = new UserDetailsPresenter(getContext());
-        userDetailsPresenter.loadRandomUserProfile(bundle.getInt(USER_ID));
+        userDetailsPresenter.loadRandomUserProfile(bundle.getString(USER_ID));
         userDetailsPresenter.attachView(this);
         userDetailsPresenter.viewIsReady();
         return view;

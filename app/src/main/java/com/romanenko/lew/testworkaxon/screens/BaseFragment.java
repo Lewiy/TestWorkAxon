@@ -7,6 +7,7 @@ import com.romanenko.lew.testworkaxon.R;
 import com.romanenko.lew.testworkaxon.base.IView;
 
 public class BaseFragment extends Fragment implements IView {
+   protected static final int NUMBERLOADEDUSERS = 10;
     @Override
     public void showError(String error) {
         if(error != null)
