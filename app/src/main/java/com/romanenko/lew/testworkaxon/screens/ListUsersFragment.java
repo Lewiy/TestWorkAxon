@@ -24,7 +24,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ListUsersFragment extends Fragment implements RandomListUserContract.ViewListRandomUsers {
+public class ListUsersFragment extends BaseFragment implements RandomListUserContract.ViewListRandomUsers {
     @BindView(R.id.lv_users)
     RecyclerView recyclerUsers;
 
@@ -42,12 +42,6 @@ public class ListUsersFragment extends Fragment implements RandomListUserContrac
         return fragment;
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-
-    }
 
     @Nullable
     @Override
@@ -60,6 +54,14 @@ public class ListUsersFragment extends Fragment implements RandomListUserContrac
         randomListUserPresenter.attachView(this);
         randomListUserPresenter.viewIsReady();
 
+        initializeUIElements();
+
+        onClickRecycleItem();
+
+        return view;
+    }
+
+    private void initializeUIElements() {
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         listAdapter = new ListAdapter(getContext(), onClickItemList());
         recyclerUsers.setLayoutManager(linearLayoutManager);
@@ -67,12 +69,30 @@ public class ListUsersFragment extends Fragment implements RandomListUserContrac
         recyclerUsers.setItemAnimator(new DefaultItemAnimator());
         recyclerUsers.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
+    }
 
+    @Override
+    public void loadListRandomUsers(List<Result> items) {
+        progressBar.setVisibility(View.GONE);
+        listAdapter.setItems(items);
+        loading = true;
+    }
+
+
+    private ListAdapter.RecyclerViewClickListener onClickItemList() {
+        return new ListAdapter.RecyclerViewClickListener() {
+            @Override
+            public void onClick(View view, int position, Result result) {
+                openUserFragmentDetail(position);
+            }
+        };
+    }
+
+    private void onClickRecycleItem() {
         recyclerUsers.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                if (dy > 0) //check for scroll down
-                {
+                if (dy > 0) {
                     visibleItemCount = linearLayoutManager.getChildCount();
                     totalItemCount = linearLayoutManager.getItemCount();
                     pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
@@ -87,30 +107,6 @@ public class ListUsersFragment extends Fragment implements RandomListUserContrac
                 }
             }
         });
-
-        return view;
-    }
-
-    @Override
-    public void loadListRandomUsers(List<Result> items) {
-        progressBar.setVisibility(View.GONE);
-        listAdapter.setItems(items);
-        loading = true;
-    }
-
-    @Override
-    public void showError() {
-
-    }
-
-    private ListAdapter.RecyclerViewClickListener onClickItemList() {
-        return new ListAdapter.RecyclerViewClickListener() {
-            @Override
-            public void onClick(View view, int position, Result result) {
-                // openUserFragmentDetail(Integer.parseInt(result.getId().getValue()));
-                openUserFragmentDetail(position);
-            }
-        };
     }
 
     private void openUserFragmentDetail(int userId) {

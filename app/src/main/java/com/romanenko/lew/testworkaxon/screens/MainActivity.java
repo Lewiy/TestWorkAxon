@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         FragmentManager fm = getSupportFragmentManager();
 
-        // Fragment fragment = fm.findFragmentById(R.id.content_frame_main_activity);
         ListUsersFragment listUsersFragment = ListUsersFragment.newInstance();
         fm.beginTransaction()
                 .replace(R.id.content_frame_main_activity, listUsersFragment, listUsersFragment.getClass().toString())

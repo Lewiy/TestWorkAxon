@@ -43,7 +43,6 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
 
                     @Override
                     public void onNext(Result randomUserProfile) {
-                        //getView().loadListRandomUsers(randomUserContainer.getResults());
 
                         getView().loadCallPhone(randomUserProfile.getPhone());
                         getView().loadDateOfBirth(parseDate(randomUserProfile.getDob().getDate()));
@@ -56,7 +55,7 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        getView().showError();
+                        getView().showError(e.getMessage().toString());
                     }
 
                     @Override
@@ -81,6 +80,7 @@ public class UserDetailsPresenter extends BasePresenter<RandomUserProfileContrac
             formattedDate = formatter.format(date);
         } catch (ParseException e) {
             e.printStackTrace();
+            getView().showError(e.getMessage().toString());
         }
 
         return formattedDate;

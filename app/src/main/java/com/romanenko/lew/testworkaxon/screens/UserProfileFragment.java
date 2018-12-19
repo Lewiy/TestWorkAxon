@@ -27,8 +27,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserProfileFragment extends Fragment implements RandomUserProfileContract.ViewListRandomUsers {
-
+public class UserProfileFragment extends BaseFragment implements RandomUserProfileContract.ViewListRandomUsers {
 
     @BindView(R.id.profile_image)
     CircleImageView circleImageViewProfile;
@@ -46,11 +45,6 @@ public class UserProfileFragment extends Fragment implements RandomUserProfileCo
     TextView email;
 
     private final int CALL_REQUEST = 100;
-
-   /*@BindView(R.id.name)
-    TextView name;
-    @BindView(R.id.name)
-    TextView name;*/
 
     private static final String USER_ID = "user_id";
 
@@ -117,11 +111,6 @@ public class UserProfileFragment extends Fragment implements RandomUserProfileCo
         this.email.setText(email);
     }
 
-    @Override
-    public void showError() {
-
-    }
-
     @OnClick(R.id.make_call_btn)
     public void OnClickCallBtn() {
         callPhoneNumber();
@@ -133,7 +122,6 @@ public class UserProfileFragment extends Fragment implements RandomUserProfileCo
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             {
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
 
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CALL_PHONE}, CALL_REQUEST);
 

@@ -43,7 +43,7 @@ public class RandomListUserPresenter extends BasePresenter<RandomListUserContrac
 
                     @Override
                     public void onError(Throwable e) {
-                        getView().showError();
+                        getView().showError(e.getMessage().toString());
                     }
 
                     @Override
