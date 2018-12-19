@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TestWorkAxon</string>
+    <string name="call_permission_denied_message">Error</string>
+    <string name="mok_loading">loading...</string>
+    <string name="hint_date_birth">Date of Birth</string>
+    <string name="hint_cell_phone">Cell phone</string>
+    <string name="hint_email">Email</string>
 </resources>
