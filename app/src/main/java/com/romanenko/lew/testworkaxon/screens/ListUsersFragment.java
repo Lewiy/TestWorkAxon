@@ -12,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.romanenko.lew.testworkaxon.R;
 import com.romanenko.lew.testworkaxon.base.RandomListUserContract;
@@ -26,11 +27,16 @@ import butterknife.ButterKnife;
 public class ListUsersFragment extends Fragment implements RandomListUserContract.ViewListRandomUsers {
     @BindView(R.id.lv_users)
     RecyclerView recyclerUsers;
+
+    @BindView(R.id.progressBar)
+    ProgressBar progressBar;
+
     private ListAdapter listAdapter;
     private LinearLayoutManager linearLayoutManager;
     private boolean loading = true;
     int pastVisiblesItems, visibleItemCount, totalItemCount;
-private RandomListUserPresenter randomListUserPresenter;
+    private RandomListUserPresenter randomListUserPresenter;
+
     public static ListUsersFragment newInstance() {
         ListUsersFragment fragment = new ListUsersFragment();
         return fragment;
@@ -50,7 +56,6 @@ private RandomListUserPresenter randomListUserPresenter;
         ButterKnife.bind(this, view);
 
 
-
         randomListUserPresenter = new RandomListUserPresenter(getContext());
         randomListUserPresenter.attachView(this);
         randomListUserPresenter.viewIsReady();
@@ -63,23 +68,20 @@ private RandomListUserPresenter randomListUserPresenter;
         recyclerUsers.addItemDecoration(new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL));
 
-        recyclerUsers.addOnScrollListener(new RecyclerView.OnScrollListener(){
+        recyclerUsers.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy)
-            {
-                if(dy > 0) //check for scroll down
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                if (dy > 0) //check for scroll down
                 {
                     visibleItemCount = linearLayoutManager.getChildCount();
                     totalItemCount = linearLayoutManager.getItemCount();
                     pastVisiblesItems = linearLayoutManager.findFirstVisibleItemPosition();
 
-                    if (loading)
-                    {
-                        if ( (visibleItemCount + pastVisiblesItems) >= totalItemCount)
-                        {
+                    if (loading) {
+                        if ((visibleItemCount + pastVisiblesItems) >= totalItemCount) {
+                            progressBar.setVisibility(View.VISIBLE);
                             loading = false;
                             randomListUserPresenter.getRandomUserApi();
-
                         }
                     }
                 }
@@ -91,6 +93,7 @@ private RandomListUserPresenter randomListUserPresenter;
 
     @Override
     public void loadListRandomUsers(List<Result> items) {
+        progressBar.setVisibility(View.GONE);
         listAdapter.setItems(items);
         loading = true;
     }
@@ -104,22 +107,21 @@ private RandomListUserPresenter randomListUserPresenter;
         return new ListAdapter.RecyclerViewClickListener() {
             @Override
             public void onClick(View view, int position, Result result) {
-               // openUserFragmentDetail(Integer.parseInt(result.getId().getValue()));
+                // openUserFragmentDetail(Integer.parseInt(result.getId().getValue()));
                 openUserFragmentDetail(position);
             }
         };
     }
 
     private void openUserFragmentDetail(int userId) {
-         UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(userId);
+        UserProfileFragment userProfileFragment = UserProfileFragment.newInstance(userId);
         ListUsersFragment listUsersFragment = ListUsersFragment.newInstance();
         FragmentManager fm = getActivity().getSupportFragmentManager();
         fm.beginTransaction()
-                .replace(R.id.content_frame_main_activity, userProfileFragment,userProfileFragment.getClass().toString())
+                .replace(R.id.content_frame_main_activity, userProfileFragment, userProfileFragment.getClass().toString())
                 .addToBackStack(userProfileFragment.getClass().toString())
                 .commit();
     }
-
 
 
 }
