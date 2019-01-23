@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +17,13 @@ import android.widget.Toast;
 
 import com.romanenko.lew.testworkaxon.R;
 import com.romanenko.lew.testworkaxon.base.RandomUserProfileContract;
+import com.romanenko.lew.testworkaxon.dI.components.DaggerActivityComponentUserProfile;
+import com.romanenko.lew.testworkaxon.dI.models.UserProfileModule;
 import com.romanenko.lew.testworkaxon.model.requestPOJO.Result;
 import com.romanenko.lew.testworkaxon.presenters.UserDetailsPresenter;
 import com.squareup.picasso.Picasso;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +51,9 @@ public class UserProfileFragment extends BaseFragment implements RandomUserProfi
 
     private static final String USER_ID = "user_id";
 
+    @Inject
+    public RandomUserProfileContract.PresenterListRandomUsers userProflePresenter;
+
     public static UserProfileFragment newInstance(Result result) {
         Bundle args = new Bundle();
         args.putString(USER_ID, result.getEmail().toString());
@@ -63,10 +69,18 @@ public class UserProfileFragment extends BaseFragment implements RandomUserProfi
         ButterKnife.bind(this, view);
         Bundle bundle = getArguments();
 
-        UserDetailsPresenter userDetailsPresenter = new UserDetailsPresenter(getContext());
-        userDetailsPresenter.loadRandomUserProfile(bundle.getString(USER_ID));
-        userDetailsPresenter.attachView(this);
-        userDetailsPresenter.viewIsReady();
+       // UserDetailsPresenter userDetailsPresenter = new UserDetailsPresenter(getContext());
+
+
+       DaggerActivityComponentUserProfile.builder()
+                .userProfileModule(new UserProfileModule(this,new UserDetailsPresenter(getContext())))
+                .build().inject(this);
+
+
+        userProflePresenter.loadRandomUserProfile(bundle.getString(USER_ID));
+        userProflePresenter.attachView(this);
+        userProflePresenter.viewIsReady();
+
         return view;
     }
 

@@ -1,4 +1,4 @@
-package com.romanenko.lew.testworkaxon.screens;
+package com.romanenko.lew.testworkaxon.screens.randomUserList;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,12 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.romanenko.lew.testworkaxon.App;
 import com.romanenko.lew.testworkaxon.R;
 import com.romanenko.lew.testworkaxon.base.RandomListUserContract;
+import com.romanenko.lew.testworkaxon.dI.components.DaggerActivityComponentListUsers;
+import com.romanenko.lew.testworkaxon.dI.models.UsersListModule;
 import com.romanenko.lew.testworkaxon.model.requestPOJO.Result;
 import com.romanenko.lew.testworkaxon.presenters.RandomListUserPresenter;
+import com.romanenko.lew.testworkaxon.screens.BaseFragment;
+import com.romanenko.lew.testworkaxon.screens.UserProfileFragment;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,11 +37,16 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
     @BindView(R.id.progressBar)
     ProgressBar progressBar;
 
-    private ListAdapter mListAdapter;
-    private LinearLayoutManager mLinearLayoutManager;
+    @Inject
+    public ListAdapter mListAdapter;
+    @Inject
+    public LinearLayoutManager mLinearLayoutManager;
+
+    @Inject
+    public RandomListUserContract.PresenterListRandomUsers mRandomListUserPresenter;
+
     private boolean loading = true;
     int mPastVisiblesItems, mVisibleItemCount, mTotalItemCount;
-    private RandomListUserPresenter mRandomListUserPresenter;
 
 
     public static ListUsersFragment newInstance() {
@@ -50,10 +62,15 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
         ButterKnife.bind(this, view);
 
 
-        mRandomListUserPresenter = new RandomListUserPresenter(getContext());
+        /*  mRandomListUserPresenter = new RandomListUserPresenter(getContext());*/
+
+        DaggerActivityComponentListUsers.builder()
+                .randomUserAPIComp(App.get(getContext()).getRandomUserApplicationComponent())
+                .usersListModule(new UsersListModule(this, new RandomListUserPresenter(getContext()),onClickItemList()))
+                .build().inject(this);
+
         mRandomListUserPresenter.attachView(this);
         mRandomListUserPresenter.viewIsReady();
-
         initializeUIElements();
 
         onClickRecycleItem();
@@ -62,8 +79,10 @@ public class ListUsersFragment extends BaseFragment implements RandomListUserCon
     }
 
     private void initializeUIElements() {
-        mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
-        mListAdapter = new ListAdapter(getContext(), onClickItemList());
+        //  mLinearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        // mListAdapter = new ListAdapter(getContext(), onClickItemList());
+
+
         recyclerUsers.setLayoutManager(mLinearLayoutManager);
         recyclerUsers.setAdapter(mListAdapter);
         recyclerUsers.setItemAnimator(new DefaultItemAnimator());

@@ -1,6 +1,7 @@
 package com.romanenko.lew.testworkaxon.network;
 
 import com.romanenko.lew.testworkaxon.model.requestPOJO.RandomUserContainer;
+import com.romanenko.lew.testworkaxon.model.requestPOJO.Result;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;

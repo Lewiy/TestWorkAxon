@@ -1,4 +1,4 @@
-package com.romanenko.lew.testworkaxon.screens;
+package com.romanenko.lew.testworkaxon.screens.randomUserList;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -13,7 +13,6 @@ import com.romanenko.lew.testworkaxon.model.requestPOJO.Result;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListUsersViewHolder> {
